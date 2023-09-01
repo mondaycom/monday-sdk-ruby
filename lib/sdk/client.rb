@@ -10,7 +10,7 @@ module Monday
     def initialize(options = {})
       @token = options[:token] # @type string , Client token provided by monday.com
       @api_domain = options[:api] # @type string (optional) monday api domain cna be changed, default defined in constants
-      @faraday_client = options[:conn] || Faraday.new # dependency injection for testing
+      @connection = options[:conn] # dependency injection for testing
     end
 
     # Main entry point to the client
@@ -23,9 +23,24 @@ module Monday
       params[:query] = query
       params[:variables] = options[:variables] || {}
 
-      options[:api_domain] = @api_domain || MONDAY_API_URL
+      options[:api_domain] = api_domain
 
-      MondayApiClient.execute(params, token, @faraday_client, options)
+      MondayApiClient.execute(params, token, connection, options)
+    end
+
+    private
+
+    def api_domain
+      @api_domain ||= MONDAY_API_URL
+    end
+
+    def connection
+      @connection ||= Faraday.new do |client|
+        client.request :json
+
+        client.response :raise_error
+        client.response :json
+      end
     end
   end
 end

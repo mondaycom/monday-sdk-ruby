@@ -8,7 +8,7 @@ module Monday
     #
     # @param token [String] The users access token (permanent or short-lived) used for API requests.
     # @param connection [Faraday::Connection] An existing Faraday connection to be used for the requests.
-    def initialize(token:, connection: nil)
+    def initialize(token: nil, connection: nil)
       @token = token
       @connection = connection
     end
@@ -20,7 +20,7 @@ module Monday
     # @param extra [Hash] Additional headers to include in the API request.
     # @return [Hash] The retrieved data. (value & version)
     def get(key, shared: false, **extra)
-      res = connection.get(resource_endpoint(key, shared:), {}, headers(**extra))
+      res = connection.get(resource_endpoint(key, shared: shared), {}, headers(**extra))
       res.body
     end
 
@@ -33,7 +33,7 @@ module Monday
     # @return [Hash] The response from the API. (version)
     def set(key, data, shared: false, **extra)
       data = { value: data } if data.is_a?(String)
-      res = connection.post(resource_endpoint(key, shared:), data.to_json, headers(**extra))
+      res = connection.post(resource_endpoint(key, shared: shared), data.to_json, headers(**extra))
       res.body
     end
 
@@ -43,7 +43,7 @@ module Monday
     # @param shared [Boolean] A flag indicating whether the data is shared with the frontend. Default is `false`.
     # @param extra [Hash] Additional headers to include in the API request.
     def delete(key, shared: false, **extra)
-      connection.delete(resource_endpoint(key, shared:), {}, headers(**extra))
+      connection.delete(resource_endpoint(key, shared: shared), {}, headers(**extra))
     end
 
     private
