@@ -29,9 +29,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 2.1'
-  spec.add_development_dependency 'rake', '~> 12, < 14.0'
+  spec.add_development_dependency 'rake', '>= 12.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
 
-  spec.add_runtime_dependency 'faraday', '~> 1, < 3.0'
+  spec.add_runtime_dependency 'faraday', '>= 1.0', '< 3.0'
   spec.add_runtime_dependency 'json', '~> 2.3'
 end

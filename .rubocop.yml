@@ -1,0 +1,21 @@
+AllCops:
+  TargetRubyVersion: 2.3
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  SafeAutoCorrect: true
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - '**/spec/**/*.rb'
+
+Metrics/MethodLength:
+  Exclude:
+    - '**/spec/**/*.rb'
+
+Metrics/AbcSize:
+  Exclude:
+    - '**/spec/**/*.rb'
