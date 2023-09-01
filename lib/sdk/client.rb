@@ -1,12 +1,11 @@
+# frozen_string_literal: true
 
 # Monday Client implementation
 module Monday
-
   class MondayClientError < StandardError; end
 
   class Client
-
-    TOKEN_MISSING_ERROR = "Should send 'token' as an option or call mondaySdk.setToken(TOKEN)".freeze
+    TOKEN_MISSING_ERROR = "Should send 'token' as an option or call mondaySdk.setToken(TOKEN)"
 
     def initialize(options = {})
       @token = options[:token] # @type string , Client token provided by monday.com
@@ -18,9 +17,7 @@ module Monday
     def api(query, options = {})
       token = options[:token] || @token
 
-      if token.nil? || token.empty?
-        raise MondayClientError.new TOKEN_MISSING_ERROR.to_s
-      end
+      raise(MondayClientError, TOKEN_MISSING_ERROR) if token.nil? || token.empty?
 
       params = {}
       params[:query] = query
@@ -28,12 +25,7 @@ module Monday
 
       options[:api_domain] = @api_domain || MONDAY_API_URL
 
-
       MondayApiClient.execute(params, token, @faraday_client, options)
     end
-
   end
-
 end
-
-
