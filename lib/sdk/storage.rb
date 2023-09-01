@@ -56,6 +56,7 @@ module Monday
     end
 
     def resource_endpoint(key, shared: false)
+      key = URI.encode_www_form_component(key)
       return key unless shared
 
       "#{MONDAY_STORAGE_URL}/#{key}?shareGlobally=true"
