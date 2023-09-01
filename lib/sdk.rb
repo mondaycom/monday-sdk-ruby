@@ -4,9 +4,11 @@
 module Monday
 end
 
+require 'faraday'
+require 'json'
+
 require 'sdk/client'
+require 'sdk/storage'
 require 'sdk/constants/constants'
 require 'sdk/monday_api/monday_api_client'
 require 'sdk/version'
-require 'faraday'
-require 'json'
