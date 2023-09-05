@@ -2,6 +2,7 @@
 
 require 'bundler/setup'
 require 'sdk'
+require_relative 'support/shared_examples'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

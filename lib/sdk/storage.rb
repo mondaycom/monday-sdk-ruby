@@ -8,9 +8,10 @@ module Monday
     #
     # @param token [String] The users access token (permanent or short-lived) used for API requests.
     # @param connection [Faraday::Connection] An existing Faraday connection to be used for the requests.
-    def initialize(token: nil, connection: nil)
+    def initialize(token: nil, api: nil, conn: nil)
       @token = token
-      @connection = connection
+      @api_domain = api
+      @connection = conn
     end
 
     # Retrieve data from the storage.
@@ -48,18 +49,22 @@ module Monday
 
     private
 
+    def api_domain
+      @api_domain ||= MONDAY_STORAGE_URL
+    end
+
     def headers(token: nil, **extra_headers)
       extra_headers.merge(
-        'Authorization' => token.presence || @token,
+        'Authorization' => token || @token,
         'Content-Type' => 'application/json'
       )
     end
 
     def resource_endpoint(key, shared: false)
-      key = URI.encode_www_form_component(key)
-      return key unless shared
+      full_url = "#{api_domain}/#{URI.encode_www_form_component(key)}"
+      return full_url unless shared
 
-      "#{MONDAY_STORAGE_URL}/#{key}?shareGlobally=true"
+      "#{full_url}?shareGlobally=true"
     end
 
     def connection

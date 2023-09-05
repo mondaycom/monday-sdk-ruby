@@ -9,7 +9,7 @@ module Monday
 
     def initialize(options = {})
       @token = options[:token] # @type string , Client token provided by monday.com
-      @api_domain = options[:api] # @type string (optional) monday api domain cna be changed, default defined in constants
+      @api_domain = options[:api] # @type string (optional) monday api domain can be changed, default defined in constants
       @connection = options[:conn] # dependency injection for testing
     end
 
