@@ -47,6 +47,22 @@ module Monday
       connection.delete(resource_endpoint(key, shared: shared), {}, headers(**extra))
     end
 
+    # Get the parsed value of the given key.
+    #
+    # @param key [String] The key associated with the data.
+    # @param shared [Boolean] A flag indicating whether the data is shared with the frontend. Default is `false`.
+    # @param extra [Hash] Additional headers to include in the API request.
+    # @return The retrieved parsed value, nil if not found or failed to parse.
+    def get_parsed_value(key, shared: false, **extra)
+      result = get(key, shared: shared, **extra)
+      raw_value = result&.fetch('value', nil)
+      return unless raw_value
+
+      JSON.parse(raw_value)
+    rescue JSON::ParserError
+      nil
+    end
+
     private
 
     def api_domain

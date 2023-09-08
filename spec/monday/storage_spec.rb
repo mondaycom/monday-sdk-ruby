@@ -128,4 +128,62 @@ RSpec.describe Monday::Storage do
       stubs.verify_stubbed_calls
     end
   end
+
+  context '#get_parsed_value' do
+    it 'default api' do
+      stubs.get('/app_storage_api/v2/test') do |env|
+        expect(env.url.host).to eq('apps-storage.monday.com')
+        [
+          200,
+          { 'Content-Type': 'application/json' },
+          '{"value": "\"monday\"", "version": "abcde"}'
+        ]
+      end
+
+      expect(subject.get_parsed_value('test')).to eq('monday')
+      stubs.verify_stubbed_calls
+    end
+
+    it 'handles parse errors' do
+      stubs.get('/app_storage_api/v2/test') do |env|
+        expect(env.url.host).to eq('apps-storage.monday.com')
+        [
+          200,
+          { 'Content-Type': 'application/json' },
+          '{"value": "monday\"", "version": "abcde"}'
+        ]
+      end
+
+      expect(subject.get_parsed_value('test')).to be_nil
+      stubs.verify_stubbed_calls
+    end
+
+    it 'handles blank response' do
+      stubs.get('/app_storage_api/v2/test') do |env|
+        expect(env.url.host).to eq('apps-storage.monday.com')
+        [
+          200,
+          { 'Content-Type': 'application/json' },
+          '{"value": null}'
+        ]
+      end
+
+      expect(subject.get_parsed_value('test')).to be_nil
+      stubs.verify_stubbed_calls
+    end
+
+    it 'allows to receive an array' do
+      stubs.get('/app_storage_api/v2/test') do |env|
+        expect(env.url.host).to eq('apps-storage.monday.com')
+        [
+          200,
+          { 'Content-Type': 'application/json' },
+          '{"value": "[\"one\",\"two\"]", "version": "abcde"}'
+        ]
+      end
+
+      expect(subject.get_parsed_value('test')).to eq(%w[one two])
+      stubs.verify_stubbed_calls
+    end
+  end
 end
