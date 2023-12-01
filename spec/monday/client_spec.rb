@@ -24,6 +24,7 @@ RSpec.describe Monday::Client do
   it 'default api' do
     stubs.post('/v2') do |env|
       expect(env.url.host).to eq('api.monday.com')
+      expect(env.request_headers).to include('Authorization' => token, 'Content-Type' => 'application/json')
       [
         200,
         { 'Content-Type': 'application/json' },
@@ -73,6 +74,41 @@ RSpec.describe Monday::Client do
 
     expect(client.api(query)).to eq({ 'name' => 'monday' })
     stubs.verify_stubbed_calls
+  end
+
+  context 'set_api_version' do
+    it 'pass custom api version header' do
+      stubs.post('/v2') do |env|
+        expect(env.request_headers).to include({ 'API-Version': '2023-10' })
+        [
+          200,
+          { 'Content-Type': 'application/json' },
+          '{"name": "monday"}'
+        ]
+      end
+
+      client = Monday::Client.new(token: token, api_version: '2023-10', conn: conn)
+
+      expect(client.api(query)).to eq({ 'name' => 'monday' })
+      stubs.verify_stubbed_calls
+    end
+
+    it 'allow to update api_version with instance method (mimic JS SDK)' do
+      stubs.post('/v2') do |env|
+        expect(env.request_headers).to include({ 'API-Version': '2023-10' })
+        [
+          200,
+          { 'Content-Type': 'application/json' },
+          '{"name": "monday"}'
+        ]
+      end
+
+      client = Monday::Client.new(token: token, conn: conn)
+      client.set_api_version('2023-10')
+
+      client.api(query)
+      stubs.verify_stubbed_calls
+    end
   end
 
   context 'raise_error middleware' do
